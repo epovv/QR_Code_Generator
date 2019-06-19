@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
 
 
+@login_required
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
@@ -14,7 +18,7 @@ def receiving_data(request):
         if bound_form.is_valid():
             bound_form.save()
             id = Lecture.objects.last().id
-            return redirect('qr/' + str(id))  # Редирект после добавления записи на QR по id
+            return redirect('qr_generator_url', id)  # Редирект после добавления записи на QR по id
 
 
 def qr_generator(request, id):
@@ -63,5 +67,18 @@ def check(request, id):
 
 
 def register(request):
-    """Регистрация"""
-    return render(request, 'registration/registration.html')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(user=username, password=password)
+            login(request, user)
+            return redirect('receiving_data_url')
+        else:
+            return redirect('registration_url')
+    else:
+        form = UserCreationForm()
+        context = {'form': form}
+        return render(request, 'registration/registration.html', context=context)

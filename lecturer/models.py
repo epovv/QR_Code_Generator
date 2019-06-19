@@ -23,6 +23,3 @@ class StudentsIsCame(models.Model):
         on_delete=models.SET_NULL,
         null=True, blank=True
     )
-# Как ограничить кол-во записей сюда, ссылаясь на Lecture?
-# Цикл for по students_count? Глобальная переменная? Итератор?
-# Сравнение списка по name и lecture__id и цифры students_count?

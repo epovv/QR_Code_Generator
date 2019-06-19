@@ -22,6 +22,9 @@
             <a class="nav-link" href="{% url 'login' %}">Login <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Log out<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'registration_url' %}">Registration</a>
           </li>
         </ul>
@@ -36,5 +39,13 @@
             </div>
         </div>
     </div>
+
+    {% if request.user.is_authenticated and request.user.is_staff %}
+        <div class="admin-panel align-items-center">
+            <a href="/admin" class="btn btn-outline-info">Admin</a>
+            {% block admin-panel %}{% endblock %}
+        </div>
+    {% endif %}
+
 </body>
 </html>
