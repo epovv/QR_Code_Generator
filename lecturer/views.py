@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from .models import *
 from .forms import *
-from django.contrib.auth.forms import UserCreationForm
 
 
 def receiving_data(request):
@@ -52,7 +51,8 @@ def check(request, id):
         if len(StudentsIsCame.objects.values(
                 'name').filter(lecture__id=id)) < Lecture.objects.get(id=id).students_count:
             # Ограничение создания записи если этот студент уже отметился
-            if request.POST['Student'] in [item['name'] for item in StudentsIsCame.objects.values('name').filter(lecture__id=id)]:
+            if request.POST['Student'] in \
+                    [item['name'] for item in StudentsIsCame.objects.values('name').filter(lecture__id=id)]:
                 return HttpResponse('Вы уже отметились!')
             else:
                 new_student = StudentsIsCame(name=request.POST['Student'], lecture=Lecture.objects.get(id=id))
@@ -64,8 +64,4 @@ def check(request, id):
 
 def register(request):
     """Регистрация"""
-    form = UserCreationForm()
-    #context = {'form': form}
     return render(request, 'registration/registration.html')
-
-
