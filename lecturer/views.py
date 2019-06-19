@@ -7,7 +7,7 @@ from .models import *
 from .forms import *
 
 
-@login_required
+@login_required(login_url='login')
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
