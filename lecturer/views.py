@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
@@ -71,14 +71,15 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(user=username, password=password)
-            login(request, user)
-            return redirect('receiving_data_url')
+            return redirect('login')
         else:
             return redirect('registration_url')
     else:
         form = UserCreationForm()
         context = {'form': form}
         return render(request, 'registration/registration.html', context=context)
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
