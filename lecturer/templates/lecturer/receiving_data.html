@@ -1,0 +1,27 @@
+{% extends "lecturer/base.html" %}
+
+{% block title %}
+    Data
+{% endblock %}
+
+{% block content %}
+
+    <form action="{% url 'receiving_data_url' %}" method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <h5>
+            Введите количество пришедших студентов: {{ form.students_count }}
+        </h5>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+{% endblock %}

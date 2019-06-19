@@ -1,0 +1,13 @@
+{% extends "lecturer/base.html" %}
+{% load qr_code %}
+
+{% block title %}
+    QR code
+{% endblock %}
+
+{% block content %}
+    <p>
+        {% qr_from_text link size="H" %}
+        {{ link }}
+    </p>
+{% endblock %}
