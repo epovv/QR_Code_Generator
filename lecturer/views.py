@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
+from django.template import Context
+
 
 
 @login_required(login_url='login')
@@ -29,7 +31,7 @@ def qr_generator(request, id):
                 request,
                 'lecturer/QR.html',
                 context={
-                    'link': 'http://127.0.0.1:8000/qr/' + str(id) + '/check_your_self/'
+                    'link': request.build_absolute_uri('check_your_self/')
                 }
             )
     except Lecture.DoesNotExist:

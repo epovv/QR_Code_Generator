@@ -13,8 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+from django.urls import path, include
 from .views import *
+from qr_code import urls as qr_code_urls
 
 urlpatterns = [
     path('', receiving_data, name='receiving_data_url'),
