@@ -5,8 +5,6 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
-from django.template import Context
-
 
 
 @login_required(login_url='login')
@@ -43,6 +41,8 @@ def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
+    if 'name' in request.COOKIES:
+        return HttpResponse('Вы уже отмечались сегодня!')
     if request.method == 'GET':
         # Если лекция под таким id существует генерируется QR иначе 404
         try:
@@ -59,11 +59,13 @@ def check(request, id):
             # Ограничение создания записи если этот студент уже отметился
             if request.POST['Student'] in \
                     [item['name'] for item in StudentsIsCame.objects.values('name').filter(lecture__id=id)]:
-                return HttpResponse('Вы уже отметились!')
+                return HttpResponse('Этот студент уже отмечен!')
             else:
                 new_student = StudentsIsCame(name=request.POST['Student'], lecture=Lecture.objects.get(id=id))
                 new_student.save()
-                return HttpResponse('Успех!')
+                response = HttpResponse('Успех!')
+                response.set_cookie('name', max_age=30)  # max_age=86400 - сутки
+                return response
         else:
             return HttpResponse('Привышен лимит пришедших на лекцию!')
 
@@ -83,5 +85,8 @@ def register(request):
 
 
 def logout_view(request):
-    logout(request)
-    return render(request, 'registration/logout.html')
+    if request.user.is_authenticated:
+        logout(request)
+        return render(request, 'registration/logout.html')
+    else:
+        return redirect('login')
