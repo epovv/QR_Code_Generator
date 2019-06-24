@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
+from django.contrib import messages
 
 
 @login_required(login_url='login')
@@ -77,6 +78,7 @@ def register(request):
             form.save()
             return redirect('login')
         else:
+            messages.error(request, 'Ошибка')
             return redirect('registration_url')
     else:
         form = UserCreationForm()
