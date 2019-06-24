@@ -64,7 +64,7 @@ def check(request, id):
                 new_student = StudentsIsCame(name=request.POST['Student'], lecture=Lecture.objects.get(id=id))
                 new_student.save()
                 response = HttpResponse('Успех!')
-                response.set_cookie('name', max_age=30)  # max_age=86400 - сутки
+                response.set_cookie('name', max_age=1)  # max_age=86400 - сутки
                 return response
         else:
             return HttpResponse('Привышен лимит пришедших на лекцию!')
