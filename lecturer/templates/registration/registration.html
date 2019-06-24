@@ -8,12 +8,17 @@
     <form method="post" action="{% url 'registration_url' %}">
         {% csrf_token %}
 
-        {% if form.error %}
-        <p>Error</p>
-        {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+                <div class="alert {% if message.tags %}
+                alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
 
         {{ form }}
-
         <input type="submit" value="Register" class="btn btn-primary">
+
     </form>
 {% endblock %}
