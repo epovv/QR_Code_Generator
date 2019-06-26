@@ -18,3 +18,4 @@ try:
 except OperationalError:
     pass  # Нельзя сделать makemigrations, т.к LectureForm ссылается на StudentsAll(Модель)
 
+# Test
