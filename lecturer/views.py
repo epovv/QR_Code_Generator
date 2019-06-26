@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -42,33 +42,37 @@ def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
-    if 'name' in request.COOKIES:
-        return HttpResponse('Вы уже отмечались сегодня!')
     if request.method == 'GET':
         # Если лекция под таким id существует генерируется QR иначе 404
         try:
             if Lecture.objects.get(id__iexact=id):
-                context = StudentsAll.objects.all()
-                response = render(request, 'lecturer/check_your_self.html', context={'name': context, 'id': id})
+                context = [item.name for item in StudentsAll.objects.all()]
+                students_list = [
+                    item['name'] for item in StudentsIsCame.objects.values('name').filter(lecture__id=id)
+                ]
+                response = render(
+                    request,
+                    'lecturer/check_your_self.html',
+                    context={'name': context, 'id': id, 'students': students_list}
+                )
         except Lecture.DoesNotExist:
             raise Http404
         return response
     elif request.method == 'POST':
+        if 'name' in request.COOKIES:
+            messages.error(request, 'Вы уже отмечались сегодня!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         # Ограничение создания записи по students_count от лектора
         if len(StudentsIsCame.objects.values(
                 'name').filter(lecture__id=id)) < Lecture.objects.get(id=id).students_count:
-            # Ограничение создания записи если этот студент уже отметился
-            if request.POST['Student'] in \
-                    [item['name'] for item in StudentsIsCame.objects.values('name').filter(lecture__id=id)]:
-                return HttpResponse('Этот студент уже отмечен!')
-            else:
-                new_student = StudentsIsCame(name=request.POST['Student'], lecture=Lecture.objects.get(id=id))
-                new_student.save()
-                response = HttpResponse('Успех!')
-                response.set_cookie('name', max_age=1)  # max_age=86400 - сутки
-                return response
+            new_student = StudentsIsCame(name=request.POST['Student'], lecture=Lecture.objects.get(id=id))
+            new_student.save()
+            response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            response.set_cookie('name', max_age=5)  # max_age=86400 - сутки
+            return response
         else:
-            return HttpResponse('Привышен лимит пришедших на лекцию!')
+            messages.error(request, 'Превышен лимит пришедших на лекцию!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def register(request):
