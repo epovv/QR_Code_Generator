@@ -17,5 +17,3 @@ try:
             return new_lecture
 except OperationalError:
     pass  # Нельзя сделать makemigrations, т.к LectureForm ссылается на StudentsAll(Модель)
-
-# qwe
