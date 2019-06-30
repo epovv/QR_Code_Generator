@@ -3,7 +3,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .models import *
 from .forms import *
 from django.contrib import messages
 
@@ -96,3 +95,19 @@ def logout_view(request):
         return render(request, 'registration/logout.html')
     else:
         return redirect('login')
+
+
+@login_required(login_url='login')
+def lecture(request):
+    count = [StudentsIsCame.objects.filter(lecture_id=i.id).count() for i in Lecture.objects.all()]
+    students = StudentsIsCame.objects.all()
+    lecture = list(zip(Lecture.objects.all(), count))
+    return render(request, 'lecturer/lecturer.html', context={'lec': lecture, 'stud': students})
+
+
+@login_required(login_url='login')
+def student(request):
+    stud = StudentsAll.objects.all()
+    lect = [[j.lecture for j in StudentsIsCame.objects.filter(name=i.name).order_by('lecture_id')] for i in stud]
+    new = list(zip(stud, lect))
+    return render(request, 'lecturer/student.html', context={'new':new})
