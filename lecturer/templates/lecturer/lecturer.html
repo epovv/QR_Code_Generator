@@ -1,0 +1,23 @@
+{% extends "lecturer/base.html" %}
+
+
+{% block content %}
+<table cellspacing="2" border="1" cellpadding="5" width="600">
+        <tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
+{% for i, count in lec%}
+
+    <tr><td>{{ i }}</td>
+        <td>
+            {% for j in stud %}
+                {%if i == j.lecture %}
+                    {{ j.name }}
+                {%endif%}
+            {% endfor %}
+        </td>
+        <td>{{ count}} / {{i.students_count }}</td>
+    </tr> <!--ряд с ячейками тела таблицы-->
+
+{% endfor %}
+
+</table>
+{% endblock %}
