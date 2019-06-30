@@ -41,3 +41,6 @@ class StudentsIsCame(models.Model):
     class Meta:
         verbose_name = 'Пришедший студент'
         verbose_name_plural = 'Пришедшие студенты'
+
+    def __str__(self):
+        return self.name + str(self.lecture)
