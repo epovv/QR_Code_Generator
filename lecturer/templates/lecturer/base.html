@@ -17,7 +17,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            {% if request.user.is_authenticated and request.user.is_staff %}
+          {% if request.user.is_authenticated and request.user.is_staff %}
           <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
               <li class="nav-item">
               <a class="navbar-brand" href="{% url 'receiving_data_url' %}">
@@ -46,7 +46,7 @@
                 <a class="nav-link" href="{% url 'registration_url' %}">Регистрация</a>
               </li>
         </ul>
-                    {%endif%}
+        {%endif%}
 
       </div>
 
