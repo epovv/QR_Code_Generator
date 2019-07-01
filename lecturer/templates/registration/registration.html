@@ -1,19 +1,24 @@
 {% extends "lecturer/base.html" %}
 
 {% block title %}
-    Registration
+    Регистрация
 {% endblock %}
 
 {% block content %}
     <form method="post" action="{% url 'registration_url' %}">
         {% csrf_token %}
 
-        {% if form.error %}
-        <p>Error</p>
-        {% endif %}
 
-        {{ form }}
+    {% if messages %}
+        {% for message in messages %}
+                <div class="alert {% if message.tags %}
+                alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
-        <input type="submit" value="Register" class="btn btn-primary">
+
+    {{ form }}
+    <p><input type="submit" value="Регистрация" class="btn btn-primary"></p>
+
     </form>
 {% endblock %}

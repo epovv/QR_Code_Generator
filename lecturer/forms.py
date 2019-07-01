@@ -16,11 +16,6 @@ try:
             )
             return new_lecture
 except OperationalError:
-    pass  # Нельзя сделать makemigrations, т.к LectureForm ссылается на StudentsAll(Модель)
-
-
-# class StudentsIsCameForm(forms.ModelForm):
-#     """Форма для записи пришедшего студента по id к лекции"""
-#     class Meta:
-#         model = StudentsIsCame
-#         fields = ['name', 'lecture']
+    pass
+    # Нельзя сделать makemigrations,
+    # т.к LectureForm ссылается на StudentsAll(Модель)

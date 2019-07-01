@@ -1,7 +1,7 @@
 {% extends "lecturer/base.html" %}
 
 {% block title %}
-    Check
+    Присутствие
 {% endblock %}
 
 {% block content %}
@@ -12,12 +12,25 @@
     {% csrf_token %}
 
     {% for name in name %}
-        <h4>
-            <input type="submit" name="Student" id="Student {{ name.name }}"
-                   value="{{ name.name }}" class="btn btn-primary" />
-            <label for="Student {{ name.name }}"></label><br />
-        </h4>
+        {% if name in students %}
+            <h4>
+                <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
+            </h4>
+        {% else %}
+            <h4>
+                <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
+            </h4>
+        {% endif %}
     {% endfor %}
+
     </form>
+    <p>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}
+                alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </p>
 
 {% endblock %}
