@@ -18,22 +18,30 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'lecture' %}">Лекции</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'student' %}">Студенты</a>
+          </li>
+
           <li class="nav-item">
             <a class="nav-link" href="{% url 'login' %}">Вход <span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Выход<span class="sr-only">(current)</span></a>
-          </li>
+
           <li class="nav-item">
             <a class="nav-link" href="{% url 'registration_url' %}">Регистрация</a>
           </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'lecture' %}">Лекции</a>
+
+
+        {% if request.user.is_authenticated and request.user.is_staff %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Выход<span class="sr-only">(current)</span></a>
           </li>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'student' %}">Студенты</a>
-          </li>
+        {% endif %}
+
         </ul>
       </div>
     </nav>
