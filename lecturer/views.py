@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -50,19 +50,22 @@ def check(request, id):
     except Lecture.DoesNotExist:
         raise Http404
     if request.method == 'GET':
-        context = [
-            name for name in StudentsAll.objects.all()
-        ]
-        response = render(
-            request,
-            'lecturer/check_your_self.html',
-            context={
-                'name': context,
-                'id': id,
-                'lecture': current_lect
-            }
-        )
-        return response
+        if current_lect == Lecture.objects.last():
+            context = [
+                name for name in StudentsAll.objects.all()
+            ]
+            response = render(
+                request,
+                'lecturer/check_your_self.html',
+                context={
+                    'name': context,
+                    'id': id,
+                    'lecture': current_lect
+                }
+            )
+            return response
+        else:
+            return HttpResponseForbidden(request)
     elif request.method == 'POST':
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
@@ -72,7 +75,7 @@ def check(request, id):
             current_lect.student.add(StudentsAll.objects.get(id=stud.pk))
             response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
-            response.set_cookie('name', max_age=5)
+            response.set_cookie('name', max_age=1)
             return response
         else:
             messages.error(request, 'Превышен лимит пришедших на лекцию!')
