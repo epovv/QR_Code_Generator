@@ -11,18 +11,18 @@ from django.contrib import messages
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
-        form = LectureForm()
+        count = len(StudentsAll.objects.all())
         return render(
             request,
             'lecturer/receiving_data.html',
-            context={'form': form}
+            context={'count': count}
         )
     elif request.method == 'POST':
-        bound_form = LectureForm(request.POST)
-        if bound_form.is_valid():
-            bound_form.save()
-            id = Lecture.objects.last().id
-            return redirect('qr_generator_url', id)
+        Lecture.objects.create(
+            students_count=request.POST['students_count']
+        )
+        id = Lecture.objects.last().id
+        return redirect('qr_generator_url', id)
 
 
 def qr_generator(request, id):
@@ -46,7 +46,6 @@ def check(request, id):
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
     if request.method == 'GET':
-        # Если лекция под таким id существует генерируется QR иначе 404
         try:
             if Lecture.objects.get(id__iexact=id):
                 context = [
@@ -74,7 +73,6 @@ def check(request, id):
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        # Ограничение создания записи по students_count от лектора
         if len(StudentsIsCame.objects.values('name').filter(lecture__id=id))\
                 < Lecture.objects.get(id=id).students_count:
             new_student = StudentsIsCame(
@@ -83,7 +81,8 @@ def check(request, id):
             )
             new_student.save()
             response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            response.set_cookie('name', max_age=5)  # max_age=86400 - сутки
+            response.set_cookie('name', max_age=5)
+            messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
             return response
         else:
             messages.error(request, 'Превышен лимит пришедших на лекцию!')
@@ -127,7 +126,7 @@ def lecture(request):
     return render(
         request,
         'lecturer/lecturer.html',
-        context={'lec': lecture, 'stud': students}
+        context={'lecture': lecture, 'stud': students}
     )
 
 
