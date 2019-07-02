@@ -28,7 +28,7 @@ def receiving_data(request):
 def qr_generator(request, id):
     """Генератор QR кода"""
     try:
-        if Lecture.objects.get(id__iexact=id):
+        if Lecture.objects.get(id=id):
             response = render(
                 request,
                 'lecturer/QR.html',
