@@ -4,4 +4,3 @@ from lecturer.models import *
 
 admin.site.register(StudentsAll)
 admin.site.register(Lecture)
-admin.site.register(StudentsIsCame)

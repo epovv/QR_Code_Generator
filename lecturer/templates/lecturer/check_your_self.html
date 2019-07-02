@@ -10,7 +10,7 @@
 
     <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
     {% for name in name %}
-        {% if name in students %}
+        {% if name in lecture.student.all  %}
             <h4>
                 <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
             </h4>

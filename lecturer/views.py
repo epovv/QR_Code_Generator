@@ -45,25 +45,21 @@ def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
+    lect = Lecture.objects.get(id=id)
     if request.method == 'GET':
         try:
-            if Lecture.objects.get(id__iexact=id):
+            if lect:
                 context = [
                     item.name for item in StudentsAll.objects.all()
                 ]
-                students_list = [
-                    item['name'] for item in
-                    StudentsIsCame.objects.values('name').filter(
-                        lecture__id=id
-                    )
-                ]
+
                 response = render(
                     request,
                     'lecturer/check_your_self.html',
                     context={
                         'name': context,
                         'id': id,
-                        'students': students_list
+                        'lecture': Lecture.objects.get(id=id)
                     }
                 )
         except Lecture.DoesNotExist:
@@ -73,15 +69,11 @@ def check(request, id):
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        if len(StudentsIsCame.objects.values('name').filter(lecture__id=id))\
+        if Lecture.objects.get(id=id).student.count()\
                 < Lecture.objects.get(id=id).students_count:
-            new_student = StudentsIsCame(
-                name=request.POST['Student'],
-                lecture=Lecture.objects.get(id=id)
-            )
-            new_student.save()
+            stud = StudentsAll.objects.get(name=request.POST['Student'])
+            Lecture.objects.get(id=id).student.add(StudentsAll.objects.get(id=stud.pk))
             response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            response.set_cookie('name', max_age=5)
             messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
             return response
         else:
@@ -118,24 +110,13 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def lecture(request):
-    """Статистика. Лекция - Студенты"""
-    count = [StudentsIsCame.objects.filter(lecture_id=i.id).count() for i in
-             Lecture.objects.all()]
-    students = StudentsIsCame.objects.all()
-    lecture = list(zip(Lecture.objects.all(), count))
-    return render(
-        request,
-        'lecturer/lecturer.html',
-        context={'lecture': lecture, 'stud': students}
-    )
+    return render(request, 'lecturer/lecturer.html', {
+            'lectures': Lecture.objects.all(),
+        })
 
 
 @login_required(login_url='login')
 def student(request):
-    """Статистика. Студент - Лекции"""
-    stud = StudentsAll.objects.all()
-    lect = [[j.lecture for j in
-             StudentsIsCame.objects.filter(name=i.name).order_by('lecture_id')]
-            for i in stud]
-    new = list(zip(stud, lect))
-    return render(request, 'lecturer/student.html', context={'new':new})
+    return render(request, 'lecturer/students.html', {
+            'students': StudentsAll.objects.all(),
+        })

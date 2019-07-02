@@ -19,6 +19,7 @@ class Lecture(models.Model):
     по кол-ву пришедших студентов"""
     students_count = models.IntegerField()
     time = models.DateTimeField(auto_now_add=True)
+    student = models.ManyToManyField(StudentsAll, blank=True)
 
     class Meta:
         verbose_name = 'Лекция'
@@ -27,20 +28,3 @@ class Lecture(models.Model):
     def __str__(self):
         return ' Лекция № ' + str(self.id)
 
-
-class StudentsIsCame(models.Model):
-    """Записи студентов, пришедших
-    на конкретную лекцию."""
-    name = models.CharField(max_length=200)
-    lecture = models.ForeignKey(
-        Lecture,
-        on_delete=models.SET_NULL,
-        null=True, blank=True
-    )
-
-    class Meta:
-        verbose_name = 'Пришедший студент'
-        verbose_name_plural = 'Пришедшие студенты'
-
-    def __str__(self):
-        return self.name + str(self.lecture)
