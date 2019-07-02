@@ -6,8 +6,8 @@
         <tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
 {% for lecture in lectures %}
 
-    <tr><td>{{ lecture }}</td> <td>  {% for stud in lecture.student.all %}
-                                            {{ stud }},
+    <tr><td>{{ lecture }} <p>{{ lecture.time }}</p></td> <td>  {% for stud in lecture.student.all %}
+                                            {{ stud }}
                                          {% endfor %}
                                     </td>
         <td>пришло {{lecture.students_count }} из {{lecture.student.count}}</td>
