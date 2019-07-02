@@ -45,9 +45,10 @@ def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
+    lect = Lecture.objects.get(id=id)
     if request.method == 'GET':
         try:
-            if Lecture.objects.get(id=id):
+            if lect:
                 context = [
                     item.name for item in StudentsAll.objects.all()
                 ]
