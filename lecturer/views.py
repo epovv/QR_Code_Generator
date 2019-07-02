@@ -45,36 +45,34 @@ def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
     последующим созданием записи о присутсвующем студенте"""
-    lect = Lecture.objects.get(id=id)
+    try:
+        current_lect = Lecture.objects.get(id=id)
+    except Lecture.DoesNotExist:
+        raise Http404
     if request.method == 'GET':
-        try:
-            if lect:
-                context = [
-                    item.name for item in StudentsAll.objects.all()
-                ]
-
-                response = render(
-                    request,
-                    'lecturer/check_your_self.html',
-                    context={
-                        'name': context,
-                        'id': id,
-                        'lecture': Lecture.objects.get(id=id)
-                    }
-                )
-        except Lecture.DoesNotExist:
-            raise Http404
+        context = [
+            name for name in StudentsAll.objects.all()
+        ]
+        response = render(
+            request,
+            'lecturer/check_your_self.html',
+            context={
+                'name': context,
+                'id': id,
+                'lecture': current_lect
+            }
+        )
         return response
     elif request.method == 'POST':
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        if Lecture.objects.get(id=id).student.count()\
-                < Lecture.objects.get(id=id).students_count:
+        if current_lect.student.count() < current_lect.students_count:
             stud = StudentsAll.objects.get(name=request.POST['Student'])
-            Lecture.objects.get(id=id).student.add(StudentsAll.objects.get(id=stud.pk))
+            current_lect.student.add(StudentsAll.objects.get(id=stud.pk))
             response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
+            response.set_cookie('name', max_age=5)
             return response
         else:
             messages.error(request, 'Превышен лимит пришедших на лекцию!')
