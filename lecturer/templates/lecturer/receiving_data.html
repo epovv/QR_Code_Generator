@@ -6,22 +6,16 @@
 
 {% block content %}
 
-    <form action="{% url 'receiving_data_url' %}" method="post">
-        {% csrf_token %}
+    <form action="{% url 'receiving_data_url' %}" method="post">{% csrf_token %}
 
-        <div class="form-group">
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    {{ form.errors }}
-                </div>
-            {% endif %}
+        <div class="col-md-5 mb-5">
+              <label for="1">Введите количество пришедших студентов:</label>
+              <input type="number" max='{{ count }}' min="0" id="1" placeholder="Введите кол-во"
+                     class="form-control" name="students_count">
         </div>
 
-        <h5>
-            Введите количество пришедших студентов: {{ form.students_count }}
-        </h5>
-
         <button type="submit" class="btn btn-primary">Подтвердить</button>
+
     </form>
 
 {% endblock %}

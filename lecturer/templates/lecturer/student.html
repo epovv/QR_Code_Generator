@@ -1,4 +1,5 @@
 {% extends "lecturer/base.html" %}
+
 {% block title %}
     Список Студентов
 {% endblock %}
@@ -8,10 +9,11 @@
         <tr><th>Студент</th><th>Лекции</th></tr> <!--ряд с ячейками заголовков-->
 {% for stud, lect in new%}
 
-    <tr><td>{{ stud }}</td> <td>  {% for j in lect %}
-                                        {{ j }}
-                                         {% endfor %}
-                                    </td>
+    <tr>
+        <td>{{ stud }}</td>
+                            <td>{% for item in lect %}
+                                    {{ item }}
+                                {% endfor %}</td>
     </tr> <!--ряд с ячейками тела таблицы-->
 
 {% endfor %}

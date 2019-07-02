@@ -3,22 +3,20 @@
 {% block title %}
     Список лекций
 {% endblock %}
+
 {% block content %}
 <table cellspacing="2" border="1" cellpadding="5" width="600">
-        <tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
-{% for i, count in lec%}
-
-    <tr><td>{{ i }}</td>
-        <td>
-            {% for j in stud %}
-                {%if i == j.lecture %}
-                    {{ j.name }}
-                {%endif%}
-            {% endfor %}
-        </td>
-        <td>{{ count}} / {{i.students_count }}</td>
+<tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
+{% for lec, count in lecture %}
+    <tr>
+        <td>{{ lec }} <p>{{ lec.time }}</p></td>
+                        <td>{% for j in stud %}
+                                {%if lec == j.lecture %}
+                                    {{ j.name }}
+                                {%endif%}
+                            {% endfor %}</td>
+                                                        <td>пришло {{ count }} из {{lec.students_count }}</td>
     </tr> <!--ряд с ячейками тела таблицы-->
-
 {% endfor %}
 
 </table>

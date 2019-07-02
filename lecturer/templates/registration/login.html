@@ -1,7 +1,7 @@
 {% extends "lecturer/base.html" %}
 
 {% block title %}
-    Войти
+    Вход
 {% endblock %}
 
 {% block content %}
@@ -23,7 +23,7 @@
         <p>Пароль: {{ form.password }}</p>
 
         <input type="submit" value="Войти" class="btn btn-primary">
-        <input type="hidden" name="next", value="{{ next }}">
+        <input type="hidden" name="next" value="{{ next }}">
     </form>
 
 {% endblock %}
