@@ -8,9 +8,7 @@
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <form action="{% url 'check_your_self_url' id %}" method="post">
-    {% csrf_token %}
-
+    <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
     {% for name in name %}
         {% if name in students %}
             <h4>
@@ -22,15 +20,13 @@
             </h4>
         {% endif %}
     {% endfor %}
-
     </form>
-    <p>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}
-                alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}
+            alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}
