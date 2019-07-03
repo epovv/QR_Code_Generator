@@ -1,10 +1,11 @@
 from django.db import models
-
+from django.utils import timezone
 
 class StudentsAll(models.Model):
     """БД содержащая всех студентов,
     для вывода списком по QR коду"""
     name = models.CharField(max_length=200)
+    activity = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Имя студента'
@@ -17,8 +18,12 @@ class StudentsAll(models.Model):
 class Lecture(models.Model):
     """Для записи новых лекций лекторами
     по кол-ву пришедших студентов"""
-    students_count = models.IntegerField()
-    time = models.DateTimeField(auto_now_add=True)
+    lecture_name = models.CharField(
+        max_length=200,
+        default='Лекция'
+    )
+    students_count = models.IntegerField(default=0)
+    time = models.DateTimeField(default=timezone.now)
     student = models.ManyToManyField(StudentsAll, blank=True)
 
     class Meta:
@@ -26,5 +31,4 @@ class Lecture(models.Model):
         verbose_name_plural = 'Лекции'
 
     def __str__(self):
-        return ' Лекция № ' + str(self.id)
-
+        return str(self.lecture_name)

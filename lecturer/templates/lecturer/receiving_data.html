@@ -6,16 +6,40 @@
 
 {% block content %}
 
-    <form action="{% url 'receiving_data_url' %}" method="post">{% csrf_token %}
-
-        <div class="col-md-5 mb-5">
-              <label for="1">Введите количество пришедших студентов:</label>
-              <input type="number" max='{{ count }}' min="0" id="1" placeholder="Введите кол-во"
-                     class="form-control" name="students_count">
+    <form action="{% url 'receiving_data_url' %}" method="post">
+        {% csrf_token %}
+      <div class="form-row">
+        <div class="col-md-6 mb-3">
+          <label for="validationDefault01">Название лекции:</label>
+          <input type="text" class="form-control" id="validationDefault01" name="lecture_name" required>
         </div>
-
-        <button type="submit" class="btn btn-primary">Подтвердить</button>
-
+        <div class="col-md-6 mb-3">
+          <label for="validationDefault02">Пришедшие студенты:</label>
+          <input type="number" class="form-control" max='{{ count }}' min="0" id="validationDefault02" name="students_count" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationDefaultUsername">Дата:</label>
+          <div class="input-group">
+            <input type="datetime-local" class="form-control" min="{{ date_min }}" id="validationDefaultUsername" name="time" aria-describedby="inputGroupPrepend2" required>
+            <span class="validity"></span>
+          </div>
+        </div>
+      </div>
+        <div>
+            <p><button type="submit" class="btn btn-primary">Подтвердить</button></p>
+        </div>
     </form>
+
+<table cellspacing="2" border="1" cellpadding="5" width="400">
+        <tr><th>Сегодняшние лекции QR коды</th>  <th>Посмотреть кто пришел</th></tr>
+
+    {% for lec in lecture_today %}
+
+        <tr><td><a class="nav-link" href="{% url 'qr_generator_url' lec.id %}">{{ lec }}</a></td>
+        <td><a class="nav-link" href="{% url 'check_your_self_url' lec.id %}">{{ lec }}</td></tr>
+
+    {% endfor %}
+
+</table>
 
 {% endblock %}

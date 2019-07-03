@@ -3,32 +3,42 @@ from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .forms import *
 from django.contrib import messages
+from .models import *
+from datetime import datetime, date
 
 
 @login_required(login_url='login')
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
-        count = len(StudentsAll.objects.all())
+        count = StudentsAll.objects.filter(activity=True).count()
+        date_min = datetime.now().isoformat()[:-10]
+        lecture_today = [
+            i for i in Lecture.objects.all() if i.time.date()==date.today()
+        ]
         return render(
             request,
             'lecturer/receiving_data.html',
-            context={'count': count}
+            context={
+                'count': count,
+                'date_min': date_min,
+                'lecture_today': lecture_today
+            }
         )
     elif request.method == 'POST':
-        Lecture.objects.create(
-            students_count=request.POST['students_count']
-        )
-        id = Lecture.objects.last().id
+        id = Lecture.objects.create(
+            lecture_name=request.POST['lecture_name'],
+            students_count=request.POST['students_count'],
+            time=datetime.strptime(request.POST['time'], '%Y-%m-%dT%H:%M')
+        ).id
         return redirect('qr_generator_url', id)
 
 
 def qr_generator(request, id):
     """Генератор QR кода"""
     try:
-        if Lecture.objects.get(id=id):
+        if Lecture.objects.filter(id=id).exists():
             response = render(
                 request,
                 'lecturer/QR.html',
@@ -50,9 +60,9 @@ def check(request, id):
     except Lecture.DoesNotExist:
         raise Http404
     if request.method == 'GET':
-        if current_lect == Lecture.objects.last():
+        if current_lect.time.date() == date.today():
             context = [
-                name for name in StudentsAll.objects.all()
+                name for name in StudentsAll.objects.all() if name.activity
             ]
             response = render(
                 request,
@@ -83,6 +93,7 @@ def check(request, id):
 
 
 def register(request):
+    """Регистрация"""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -102,6 +113,7 @@ def register(request):
 
 
 def logout_view(request):
+    """Выход из учетной запси"""
     if request.user.is_authenticated:
         logout(request)
         return render(request, 'registration/logout.html')
@@ -111,13 +123,15 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def lecture(request):
+    """Статистика. Лекция - Студенты"""
     return render(request, 'lecturer/lecturer.html', {
-            'lectures': Lecture.objects.all(),
+            'lectures': Lecture.objects.all().order_by('-time')
         })
 
 
 @login_required(login_url='login')
 def student(request):
+    """Статистика. Студент - Лекции"""
     return render(request, 'lecturer/students.html', {
-            'students': StudentsAll.objects.all(),
+            'students': StudentsAll.objects.all()
         })
