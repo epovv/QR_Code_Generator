@@ -15,7 +15,7 @@ def receiving_data(request):
         count = StudentsAll.objects.filter(activity=True).count()
         date_min = datetime.now().isoformat()[:-10]
         lecture_today = [
-            i for i in Lecture.objects.all() if i.time.date()==date.today()
+            i for i in Lecture.objects.all() if i.time.date() == date.today()
         ]
         return render(
             request,
@@ -37,18 +37,17 @@ def receiving_data(request):
 
 def qr_generator(request, id):
     """Генератор QR кода"""
-    try:
-        if Lecture.objects.filter(id=id).exists():
-            response = render(
-                request,
-                'lecturer/QR.html',
-                context={
-                    'link': request.build_absolute_uri('check_your_self/')
-                }
-            )
-    except Lecture.DoesNotExist:
+    if Lecture.objects.filter(id=id).exists():
+        return render(
+            request,
+            'lecturer/QR.html',
+            context={
+                'link': request.build_absolute_uri('check_your_self/')
+            }
+        )
+    else:
         raise Http404
-    return response
+
 
 
 def check(request, id):
@@ -61,14 +60,12 @@ def check(request, id):
         raise Http404
     if request.method == 'GET':
         if current_lect.time.date() == date.today():
-            context = [
-                name for name in StudentsAll.objects.all() if name.activity
-            ]
+            context = StudentsAll.objects.all()
             response = render(
                 request,
                 'lecturer/check_your_self.html',
                 context={
-                    'name': context,
+                    'students': context,
                     'id': id,
                     'lecture': current_lect
                 }
@@ -80,9 +77,11 @@ def check(request, id):
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
         if current_lect.student.count() < current_lect.students_count:
-            stud = StudentsAll.objects.get(name=request.POST['Student'])
-            current_lect.student.add(StudentsAll.objects.get(id=stud.pk))
+            current_lect.student.add(
+                StudentsAll.objects.get(name=request.POST['Student'])
+            )
             response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
             response.set_cookie('name', max_age=1)

@@ -30,13 +30,14 @@
         </div>
     </form>
 
-<table cellspacing="2" border="1" cellpadding="5" width="400">
-        <tr><th>Сегодняшние лекции QR коды</th>  <th>Посмотреть кто пришел</th></tr>
+<table cellspacing="2" border="1" cellpadding="5" width="500">
+        <tr><th>Сегодняшние лекции</th>  <th></th></tr>
 
     {% for lec in lecture_today %}
 
-        <tr><td><a class="nav-link" href="{% url 'qr_generator_url' lec.id %}">{{ lec }}</a></td>
-        <td><a class="nav-link" href="{% url 'check_your_self_url' lec.id %}">{{ lec }}</td></tr>
+    <tr><td> <p align="center">{{lec}}</p> </td>
+        <td><a class="nav-link" href="{% url 'qr_generator_url' lec.id %}">Посмотреть QR код</a>
+            <a class="nav-link" href="{% url 'check_your_self_url' lec.id %}">Посмотреть пришедших студентов</a></td></tr>
 
     {% endfor %}
 

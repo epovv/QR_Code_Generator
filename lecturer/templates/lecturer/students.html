@@ -7,7 +7,12 @@
 {% for student in students %}
 
     <tr><td>
-        {{ student.name }}
+        {% if student.activity %}
+        <p align="center">{{ student.name }}</p>
+        {% else %}
+        <p align="center">{{ student.name }}</p>
+        <p align="center"><strong>Не активен!</strong></p>
+        {% endif %}
         </td>
         <td>
             {% for lect in student.lecture_set.all %}
