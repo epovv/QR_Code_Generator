@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import *
 from datetime import datetime, date
+from django.utils import timezone
 
 
 @login_required(login_url='login')
@@ -15,7 +16,8 @@ def receiving_data(request):
         count = StudentsAll.objects.filter(activity=True).count()
         date_min = datetime.now().isoformat()[:-10]
         lecture_today = [
-            i for i in Lecture.objects.all() if i.time.date() == date.today()
+            i for i in Lecture.objects.all()
+            if timezone.localdate(i.time) == date.today()
         ]
         return render(
             request,
@@ -49,7 +51,6 @@ def qr_generator(request, id):
         raise Http404
 
 
-
 def check(request, id):
     """Генерация ссылки для QR кода на шаблон
     для выбора студентов к конкретному id лекции с
@@ -59,7 +60,7 @@ def check(request, id):
     except Lecture.DoesNotExist:
         raise Http404
     if request.method == 'GET':
-        if current_lect.time.date() == date.today():
+        if timezone.localdate(current_lect.time) == date.today():
             context = StudentsAll.objects.all()
             response = render(
                 request,
