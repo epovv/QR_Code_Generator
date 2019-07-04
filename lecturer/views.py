@@ -77,8 +77,8 @@ def check(request, id):
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        students_count = current_lect.students_count
-        if current_lect.student.count() < students_count:
+
+        if current_lect.student.count() < current_lect.students_count:
             current_lect.student.add(
                 StudentsAll.objects.get(name=request.POST['Student'])
             )
