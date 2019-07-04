@@ -9,15 +9,17 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
-    {% for name in name %}
-        {% if name in lecture.student.all  %}
-            <h4>
-                <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
-            </h4>
-        {% else %}
-            <h4>
-                <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
-            </h4>
+    {% for name in students %}
+        {% if name.activity %}
+            {% if name in lecture.student.all  %}
+                <h4>
+                    <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
+                </h4>
+            {% else %}
+                <h4>
+                    <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
+                </h4>
+            {% endif %}
         {% endif %}
     {% endfor %}
     </form>
