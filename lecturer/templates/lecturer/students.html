@@ -1,5 +1,8 @@
 {% extends "lecturer/base.html" %}
 
+{% block title %}
+    Список Студентов
+{% endblock %}
 
 {% block content %}
 <table cellspacing="2" border="1" cellpadding="5" width="600">
@@ -8,15 +11,16 @@
 
     <tr><td>
         {% if student.activity %}
-        <p align="center">{{ student.name }}</p>
+        <p>{{ student.name }}</p>
+        Группа: {{ student.my_group }}
         {% else %}
-        <p align="center">{{ student.name }}</p>
-        <p align="center"><strong>Не активен!</strong></p>
+        <p>{{ student.name }} <strong>Не активен!</strong></p>
+        Группа: {{ student.my_group }}
         {% endif %}
         </td>
         <td>
             {% for lect in student.lecture_set.all %}
-            {{ lect }}
+            {{ lect }}{% if not forloop.last %},{% endif %}
             {% endfor %}
         </td>
     </tr> <!--ряд с ячейками тела таблицы-->

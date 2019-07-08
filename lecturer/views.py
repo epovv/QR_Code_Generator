@@ -19,21 +19,27 @@ def receiving_data(request):
             i for i in Lecture.objects.all()
             if timezone.localdate(i.time) == date.today()
         ]
+        groups = Group.objects.all()
         return render(
             request,
             'lecturer/receiving_data.html',
             context={
                 'count': count,
                 'date_min': date_min,
-                'lecture_today': lecture_today
+                'lecture_today': lecture_today,
+                'groups': groups
             }
         )
     elif request.method == 'POST':
-        id = Lecture.objects.create(
+        post_groups = request.POST.getlist('groups')
+        query_groups = Group.objects.filter(group_name__in=post_groups)
+        created_object = Lecture.objects.create(
             lecture_name=request.POST['lecture_name'],
             students_count=request.POST['students_count'],
-            time=datetime.strptime(request.POST['time'], '%Y-%m-%dT%H:%M')
-        ).id
+            time=datetime.strptime(request.POST['time'], '%Y-%m-%dT%H:%M'),
+        )
+        created_object.group.add(*query_groups)
+        id = created_object.id
         return redirect('qr_generator_url', id)
 
 
@@ -61,7 +67,12 @@ def check(request, id):
         raise Http404
     if request.method == 'GET':
         if timezone.localdate(current_lect.time) == date.today():
-            context = StudentsAll.objects.all()
+            list_groups = [
+                i for i in current_lect.group.all().values_list('group_name', flat=True)
+            ]
+            context = StudentsAll.objects.filter(
+                my_group__group_name__in=list_groups
+            )
             response = render(
                 request,
                 'lecturer/check_your_self.html',
@@ -124,7 +135,7 @@ def logout_view(request):
 @login_required(login_url='login')
 def lecture(request):
     """Статистика. Лекция - Студенты"""
-    return render(request, 'lecturer/lecturer.html', {
+    return render(request, 'lecturer/lectures.html', {
             'lectures': Lecture.objects.all().order_by('-time')
         })
 
@@ -133,5 +144,5 @@ def lecture(request):
 def student(request):
     """Статистика. Студент - Лекции"""
     return render(request, 'lecturer/students.html', {
-            'students': StudentsAll.objects.all()
+            'students': StudentsAll.objects.all().order_by('my_group')
         })

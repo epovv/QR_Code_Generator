@@ -9,6 +9,7 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
+        <p><strong>Группы: {% for group in lecture.group.all %} {{ group }}{% if not forloop.last %},{% endif %}{% endfor %}</strong></p>
     {% for name in students %}
         {% if name.activity %}
             {% if name in lecture.student.all  %}
