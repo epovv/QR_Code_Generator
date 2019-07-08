@@ -24,6 +24,14 @@
             <span class="validity"></span>
           </div>
         </div>
+        <div class="col-md-6 mb-3">
+          <label for="exampleFormControlSelect2">Одна или несколько групп:</label>
+          <select multiple class="form-control" id="exampleFormControlSelect2" name="groups">
+              {% for group in groups %}
+                <option>{{ group }}</option>
+              {% endfor %}
+          </select>
+        </div>
       </div>
         <div>
             <p><button type="submit" class="btn btn-primary">Подтвердить</button></p>

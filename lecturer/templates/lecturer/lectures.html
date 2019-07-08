@@ -7,7 +7,7 @@
 {% for lecture in lectures %}
 
     <tr><td>{{ lecture }} <p>{{ lecture.time }}</p></td> <td>  {% for stud in lecture.student.all %}
-                                            {{ stud }}
+                                            {{ stud }}{% if not forloop.last %},{% endif %}
                                          {% endfor %}
                                     </td>
         <td>пришло {{lecture.student.count}} из {{lecture.students_count }}</td>
