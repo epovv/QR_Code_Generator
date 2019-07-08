@@ -9,5 +9,5 @@ urlpatterns = [
     path('qr/<int:id>/check_your_self/', check, name='check_your_self_url'),
     path('logout/', logout_view, name='logout'),
     path('lectures/', lecture, name='lecture'),
-    path('student/', student, name='student'),
+    path('students/', student, name='student'),
 ]
