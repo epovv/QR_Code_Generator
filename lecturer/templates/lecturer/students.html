@@ -1,31 +1,51 @@
 {% extends "lecturer/base.html" %}
 
 {% block title %}
-    Список Студентов
+    Список студентов
 {% endblock %}
 
 {% block content %}
-<table cellspacing="2" border="1" cellpadding="5" width="600">
-        <tr><th>Студент</th><th>Лекции</th></tr> <!--ряд с ячейками заголовков-->
-{% for student in students %}
+    <table cellspacing="2" border="1" cellpadding="5" width="600">
+            <tr><th>Студент</th><th>Лекции</th></tr> <!--ряд с ячейками заголовков-->
+    {% for student in students %}
 
-    <tr><td>
-        {% if student.activity %}
-        <p>{{ student.name }}</p>
-        Группа: {{ student.my_group }}
-        {% else %}
-        <p>{{ student.name }} <strong>Не активен!</strong></p>
-        Группа: {{ student.my_group }}
-        {% endif %}
-        </td>
-        <td>
-            {% for lect in student.lecture_set.all %}
-            {{ lect }}{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        </td>
-    </tr> <!--ряд с ячейками тела таблицы-->
+        <tr><td>
+            {% if student.activity %}
+            <p>{{ student.name }}</p>
+            Группа: {{ student.my_group }}
+            {% else %}
+            <p>{{ student.name }} <strong>Не активен!</strong></p>
+            Группа: {{ student.my_group }}
+            {% endif %}
+            </td>
+            <td>
+                {% for lect in student.lecture_set.all %}
+                {{ lect }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </td>
+        </tr> <!--ряд с ячейками тела таблицы-->
 
-{% endfor %}
+    {% endfor %}
 
-</table>
+    </table>
+
+    <p>{% if is_paginated %}
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% for n in students.paginator.page_range %}
+                    {% if students.number == n %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}<span
+                            class="sr-only">(current)</span></a>
+                        </li>
+                    {% elif n > students.number|add:-3 and n < students.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}</p>
+
 {% endblock %}

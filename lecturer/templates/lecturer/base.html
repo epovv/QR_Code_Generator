@@ -19,7 +19,10 @@
         {% if request.user.is_authenticated and request.user.is_staff %}
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="navbar-brand" href="{% url 'receiving_data_url' %}">QR code</a>
+                <a class="navbar-brand" href="{% url 'main_page_url' %}">QR code</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'receiving_data_url' %}">Создать лекцию</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'lecture' %}">Лекции</a>
@@ -55,6 +58,7 @@
         </div>
     </div>
 </div>
+
 
 </body>
 </html>

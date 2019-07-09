@@ -1,19 +1,41 @@
 {% extends "lecturer/base.html" %}
 
+{% block title %}
+    Список лекций
+{% endblock %}
 
 {% block content %}
-<table cellspacing="2" border="1" cellpadding="5" width="600">
-        <tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
-{% for lecture in lectures %}
+    <table cellspacing="2" border="1" cellpadding="5" width="600">
+            <tr><th>Лекция</th><th>Студенты</th><th>Число слушателей</th></tr> <!--ряд с ячейками заголовков-->
+    {% for lecture in lectures %}
 
-    <tr><td>{{ lecture }} <p>{{ lecture.time }}</p></td> <td>  {% for stud in lecture.student.all %}
-                                            {{ stud }}{% if not forloop.last %},{% endif %}
-                                         {% endfor %}
-                                    </td>
-        <td>пришло {{lecture.student.count}} из {{lecture.students_count }}</td>
-    </tr> <!--ряд с ячейками тела таблицы-->
+        <tr><td>{{ lecture }} <p>{{ lecture.time }}</p></td> <td>  {% for stud in lecture.student.all %}
+                                                {{ stud }}{% if not forloop.last %},{% endif %}
+                                             {% endfor %}
+                                        </td>
+            <td>пришло {{lecture.student.count}} из {{lecture.students_count }}</td>
+        </tr> <!--ряд с ячейками тела таблицы-->
 
-{% endfor %}
+    {% endfor %}
 
-</table>
+    </table>
+
+    <p>{% if is_paginated %}
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% for n in lectures.paginator.page_range %}
+                    {% if lectures.number == n %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}<span
+                            class="sr-only">(current)</span></a>
+                        </li>
+                    {% elif n > lectures.number|add:-3 and n < lectures.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}</p>
 {% endblock %}
