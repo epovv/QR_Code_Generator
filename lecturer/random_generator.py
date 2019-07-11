@@ -56,6 +56,7 @@ group_name = ['MTS-11', 'MTS-21', 'MTS-31', 'MTS-41', 'VM-11', 'VM-21',
 
 
 def run_random():
+    """Генератор случайных имен и активности для каждой из 16-ти групп"""
     for group in group_name:
         try:
             a = Group.objects.create(group_name=group)

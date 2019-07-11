@@ -1,6 +1,6 @@
 from django.contrib import admin
 from lecturer.models import *
-#from . import random_generator
+# from . import random_generator
 
 
 class StudentsAllAdmin(admin.ModelAdmin):
@@ -29,4 +29,4 @@ admin.site.register(StudentsAll, StudentsAllAdmin)
 admin.site.register(Lecture, LectureAdmin)
 admin.site.register(Group)
 
-#random_generator.run_random()
+# random_generator.run_random()
