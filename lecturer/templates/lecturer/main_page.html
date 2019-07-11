@@ -12,7 +12,7 @@
 
         {% for lec in lecture_today %}
 
-        <tr><td> <p align="center">{{lec}}</p> </td>
+        <tr><td> <p align="center">{{lec}}<p>{{ lec.time }}</p></p></td>
             <td><a class="nav-link" href="{% url 'qr_generator_url' lec.id %}">Посмотреть QR код</a>
                 <a class="nav-link" href="{% url 'check_your_self_url' lec.id %}">Посмотреть пришедших студентов</a></td></tr>
 

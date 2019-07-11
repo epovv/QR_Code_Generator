@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import reverse
 
 
 class Group(models.Model):
@@ -23,11 +24,27 @@ class StudentsAll(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Имя студента'
-        verbose_name_plural = 'Имена студентов'
+        verbose_name = 'Студент'
+        verbose_name_plural = 'Студенты'
+        ordering = ['my_group']
 
     def __str__(self):
         return self.name
+
+    def name_admin(self):
+        return self.name
+    name_admin.short_description = 'Студент'
+
+    def my_group_admin(self):
+        return self.my_group
+    my_group_admin.short_description = 'Группа'
+
+    def activity_admin(self):
+        if self.activity:
+            return 'Студент активен'
+        else:
+            return 'Студент не активен'
+    activity_admin.short_description = 'Активность'
 
 
 class Lecture(models.Model):
@@ -44,6 +61,19 @@ class Lecture(models.Model):
     class Meta:
         verbose_name = 'Лекция'
         verbose_name_plural = 'Лекции'
+        ordering = ['-time']
 
     def __str__(self):
         return str(self.lecture_name)
+
+    def lecture_name_admin(self):
+        return self.lecture_name
+    lecture_name_admin.short_description = 'Лекция'
+
+    def time_admin(self):
+        return self.time
+    time_admin.short_description = 'Дата лекции'
+
+    def stud_count_admin(self):
+        return str(self.student.count()) + ' из ' + str(self.students_count)
+    stud_count_admin.short_description = 'Студентов пришло'

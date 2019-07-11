@@ -12,8 +12,9 @@ from django.core.paginator import Paginator
 
 @login_required(login_url='login')
 def main_page(request):
+    """Главная страница с сегодняшними лекциями"""
     lecture_today = [
-        i for i in Lecture.objects.all()
+        i for i in Lecture.objects.all().order_by('-time')
         if timezone.localdate(i.time) == date.today()
     ]
     paginator = Paginator(lecture_today, 5)
@@ -140,7 +141,7 @@ def logout_view(request):
 @login_required(login_url='login')
 def lecture(request):
     """Статистика. Лекция - Студенты"""
-    lectures = Lecture.objects.all().order_by('-time')
+    lectures = Lecture.objects.all()
     paginator = Paginator(lectures, 5)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -155,7 +156,7 @@ def lecture(request):
 @login_required(login_url='login')
 def student(request):
     """Статистика. Студент - Лекции"""
-    students = StudentsAll.objects.all().order_by('my_group')
+    students = StudentsAll.objects.all()
     paginator = Paginator(students, 5)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
