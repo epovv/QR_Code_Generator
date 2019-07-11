@@ -1,4 +1,5 @@
 from .models import Group, StudentsAll
+from django.db.utils import IntegrityError
 import random
 
 
@@ -55,17 +56,26 @@ group_name = ['MTS-11', 'MTS-21', 'MTS-31', 'MTS-41', 'VM-11', 'VM-21',
 
 
 def run_random():
-    try:
-        for group in group_name:
+    for group in group_name:
+        try:
             a = Group.objects.create(group_name=group)
             a.save()
-            for i in range(random.randrange(10, 15)):
+        except IntegrityError:
+            print('База сгенерирована отключите скрипт')
+        for i in range(random.randrange(10, 15)):
+            try:
+                if random.randrange(0, 100) > 95:
+                    activity = False
+                else:
+                    activity = True
+                name = random.choice(first_name) + ' ' + random.choice(last_name)
                 b = StudentsAll.objects.create(
-                    name=random.choice(first_name) + ' ' + random.choice(last_name),
-                    my_group=a
+                    name=name,
+                    my_group=a,
+                    activity=activity
                 )
                 b.save()
-    except:
-        pass
+                print(group + ' - ' + name + ' ...OK')
+            except IntegrityError:
+                pass
     print('finish')
-
