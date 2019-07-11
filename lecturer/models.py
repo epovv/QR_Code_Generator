@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 
 
 class Group(models.Model):
-    group_name = models.CharField(max_length=200)
+    group_name = models.CharField(max_length=200, unique=True)
 
     class Meta:
         verbose_name = 'Группа'
@@ -16,7 +16,7 @@ class Group(models.Model):
 class StudentsAll(models.Model):
     """БД содержащая всех студентов,
     для вывода списком по QR коду"""
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     activity = models.BooleanField(default=True)
     my_group = models.ForeignKey(
         Group,
