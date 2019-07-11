@@ -157,7 +157,7 @@ def lecture(request):
 def student(request):
     """Статистика. Студент - Лекции"""
     students = StudentsAll.objects.all()
-    paginator = Paginator(students, 5)
+    paginator = Paginator(students, 10)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     is_paginator = page.has_other_pages()
