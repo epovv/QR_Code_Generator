@@ -21,6 +21,10 @@
                     <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
                 </h4>
             {% endif %}
+        {% else %}
+            <h4>
+                <input type="button" name="Student" value="{{ name }}" class="btn btn-secondary"/>
+            </h4>
         {% endif %}
     {% endfor %}
     </form>

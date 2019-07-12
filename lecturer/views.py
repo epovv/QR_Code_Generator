@@ -8,6 +8,7 @@ from .models import *
 from datetime import datetime, date
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 @login_required(login_url='login')
@@ -142,7 +143,7 @@ def logout_view(request):
 def lecture(request):
     """Статистика. Лекция - Студенты"""
     lectures = Lecture.objects.all()
-    paginator = Paginator(lectures, 5)
+    paginator = Paginator(lectures, 4)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     is_paginator = page.has_other_pages()
@@ -156,13 +157,29 @@ def lecture(request):
 @login_required(login_url='login')
 def student(request):
     """Статистика. Студент - Лекции"""
-    students = StudentsAll.objects.all()
-    paginator = Paginator(students, 10)
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        search_paginator = True
+        students = StudentsAll.objects.filter(
+            Q(name__icontains=search_query) |
+            Q(my_group__group_name__icontains=search_query)
+        )
+    else:
+        search_paginator = False
+        students = StudentsAll.objects.all()
+
+    paginator = Paginator(students, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     is_paginator = page.has_other_pages()
     return render(
         request,
         'lecturer/students.html',
-        context={'students': page,'is_paginated': is_paginator}
+        context={
+            'students': page,
+            'is_paginated': is_paginator,
+            'search_paginator': search_paginator,
+            'search_query': search_query
+        }
     )
