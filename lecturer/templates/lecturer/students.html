@@ -5,26 +5,39 @@
 {% endblock %}
 
 {% block content %}
-    <table cellspacing="2" border="1" cellpadding="5" width="600">
-            <tr><th>Студент</th><th>Лекции</th></tr> <!--ряд с ячейками заголовков-->
+    <p>
+        <form class="form-inline" action="{% url 'student' %}">
+            <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search" name="search">
+            <button class="btn btn btn-outline-primary" type="submit">Поиск</button>
+        </form>
+    </p>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Студент</th>
+                <th scope="col">Лекции</th>
+            </tr>
+        </thead>
     {% for student in students %}
 
-        <tr><td>
-            {% if student.activity %}
-            <p>{{ student.name }}</p>
-            Группа: {{ student.my_group }}
-            {% else %}
-            <p>{{ student.name }} <strong>Не активен!</strong></p>
-            Группа: {{ student.my_group }}
-            {% endif %}
-            </td>
-            <td>
-                {% for lect in student.lecture_set.all %}
-                {{ lect }}{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            </td>
-        </tr> <!--ряд с ячейками тела таблицы-->
-
+        <tbody>
+            <tr>
+                <td scope="row">
+                {% if student.activity %}
+                <p>{{ student.name }}</p>
+                Группа: {{ student.my_group }}
+                {% else %}
+                <p>{{ student.name }} <strong>Не активен!</strong></p>
+                Группа: {{ student.my_group }}
+                {% endif %}
+                </td>
+                <td scope="row">
+                    {% for lect in student.lecture_set.all %}
+                        {{ lect }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
     {% endfor %}
 
     </table>
@@ -33,19 +46,33 @@
         <nav aria-label="...">
             <ul class="pagination">
                 {% for n in students.paginator.page_range %}
-                    {% if students.number == n %}
-                        <li class="page-item active" aria-current="page">
-                            <a class="page-link" href="?page={{ n }}">{{ n }}<span
-                            class="sr-only">(current)</span></a>
-                        </li>
-                    {% elif n > students.number|add:-3 and n < students.number|add:3 %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                        </li>
+                    {% if search_paginator %}
+                        {% if students.number == n %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?search={{ search_query }}&page={{ n }}">{{ n }}<span
+                                class="sr-only">(current)</span></a>
+                            </li>
+                        {% elif n > students.number|add:-3 and n < students.number|add:3 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?search={{ search_query }}&page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        {% if students.number == n %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}<span
+                                class="sr-only">(current)</span></a>
+                            </li>
+                        {% elif n > students.number|add:-3 and n < students.number|add:3 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </ul>
         </nav>
-        {% endif %}</p>
+        {% endif %}
+    </p>
 
 {% endblock %}
