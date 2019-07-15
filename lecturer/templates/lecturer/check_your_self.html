@@ -8,6 +8,13 @@
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}
+            alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
         <p><strong>Группы: {% for group in lecture.group.all %} {{ group }}{% if not forloop.last %},{% endif %}{% endfor %}</strong></p>
     {% for name in students %}
@@ -28,12 +35,5 @@
         {% endif %}
     {% endfor %}
     </form>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}
-            alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
 
 {% endblock %}
