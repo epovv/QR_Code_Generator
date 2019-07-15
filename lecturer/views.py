@@ -35,7 +35,7 @@ def receiving_data(request):
         return render(
             request,
             'lecturer/receiving_data.html',
-            context={'groups': groups, 'date_min': date_min,}
+            context={'groups': groups, 'date_min': date_min}
         )
     elif request.method == 'POST':
         post_groups = request.POST.getlist('groups')
@@ -147,7 +147,7 @@ def lecture(request):
     return render(
         request,
         'lecturer/lectures.html',
-        context={'lectures': page,'is_paginated': is_paginator}
+        context={'lectures': page, 'is_paginated': is_paginator}
     )
 
 
