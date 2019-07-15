@@ -1,10 +1,13 @@
 from django.db import models
-from django.shortcuts import reverse
 
 
 class Group(models.Model):
     """БД содержащая группы студентов"""
-    group_name = models.CharField(max_length=200, unique=True)
+    group_name = models.CharField(
+        verbose_name='Название группы',
+        max_length=200,
+        unique=True,
+    )
 
     class Meta:
         verbose_name = 'Группа'
@@ -17,10 +20,14 @@ class Group(models.Model):
 class StudentsAll(models.Model):
     """БД содержащая всех студентов, их активность и
     к какой группе принадлежат"""
-    name = models.CharField(max_length=200, unique=True)
-    activity = models.BooleanField(default=True)
+    name = models.CharField(
+        verbose_name='Студент',
+        max_length=200,
+        unique=True)
+    activity = models.BooleanField(verbose_name='Активность', default=True)
     my_group = models.ForeignKey(
         Group,
+        verbose_name='Группа',
         on_delete=models.CASCADE,
     )
 
@@ -32,32 +39,18 @@ class StudentsAll(models.Model):
     def __str__(self):
         return self.name
 
-    def name_admin(self):
-        return self.name
-    name_admin.short_description = 'Студент'
-
-    def my_group_admin(self):
-        return self.my_group
-    my_group_admin.short_description = 'Группа'
-
-    def activity_admin(self):
-        if self.activity:
-            return 'Студент активен'
-        else:
-            return 'Студент не активен'
-    activity_admin.short_description = 'Активность'
-
 
 class Lecture(models.Model):
     """Для записи новых лекций лекторами
     по кол-ву пришедших студентов"""
     lecture_name = models.CharField(
+        verbose_name='Лекция',
         max_length=200,
     )
     students_count = models.IntegerField()
-    time = models.DateTimeField()
+    time = models.DateTimeField(verbose_name='Дата лекции')
     student = models.ManyToManyField(StudentsAll, blank=True)
-    group = models.ManyToManyField(Group, blank=True)
+    group = models.ManyToManyField(Group, verbose_name='Группа', blank=True)
 
     class Meta:
         verbose_name = 'Лекция'
@@ -66,14 +59,6 @@ class Lecture(models.Model):
 
     def __str__(self):
         return str(self.lecture_name)
-
-    def lecture_name_admin(self):
-        return self.lecture_name
-    lecture_name_admin.short_description = 'Лекция'
-
-    def time_admin(self):
-        return self.time
-    time_admin.short_description = 'Дата лекции'
 
     def stud_count_admin(self):
         return str(self.student.count()) + ' из ' + str(self.students_count)
