@@ -5,7 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import *
-from datetime import datetime, date
+from datetime import datetime
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -14,10 +14,7 @@ from django.db.models import Q
 @login_required(login_url='login')
 def main_page(request):
     """Главная страница с сегодняшними лекциями"""
-    lecture_today = [
-        i for i in Lecture.objects.all().order_by('-time')
-        if timezone.localdate(i.time) == date.today()
-    ]
+    lecture_today = Lecture.objects.filter(time__date=timezone.now())
     paginator = Paginator(lecture_today, 5)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -78,7 +75,7 @@ def check(request, id):
     except Lecture.DoesNotExist:
         raise Http404
     if request.method == 'GET':
-        if timezone.localdate(current_lect.time) == date.today():
+        if current_lect.time.date() == timezone.now().date():
             list_groups = current_lect.group.all().values_list(
                     'group_name', flat=True
                 )

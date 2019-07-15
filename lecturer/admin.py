@@ -11,8 +11,7 @@ class StudentsAllAdmin(admin.ModelAdmin):
         ('Активность:', {'fields': ['activity']})
     ]
 
-    list_display = ('name_admin', 'my_group_admin', 'activity_admin')
-
+    list_display = ('name', 'activity', 'my_group')
 
 class LectureAdmin(admin.ModelAdmin):
     """Описание модели Lecture в админке"""
@@ -22,7 +21,7 @@ class LectureAdmin(admin.ModelAdmin):
         ('Группы присутствующие на лекции', {'fields': ['group']})
     ]
 
-    list_display = ('lecture_name_admin', 'time_admin', 'stud_count_admin')
+    list_display = ('lecture_name', 'time', 'stud_count_admin')
 
 
 admin.site.register(StudentsAll, StudentsAllAdmin)
