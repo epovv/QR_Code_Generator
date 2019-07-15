@@ -13,6 +13,7 @@ class StudentsAllAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'activity', 'my_group')
 
+
 class LectureAdmin(admin.ModelAdmin):
     """Описание модели Lecture в админке"""
     fieldsets = [
