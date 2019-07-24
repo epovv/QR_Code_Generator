@@ -1,12 +1,45 @@
 from django.db import models
 
 
+class Course(models.Model):
+    """БД для курсов"""
+    course_name = models.CharField(
+        verbose_name='Название курса',
+        max_length=200,
+        unique=True
+    )
+    activity = models.BooleanField(verbose_name='Активность', default=True)
+    comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = 'Курс'
+        verbose_name_plural = 'Курсы'
+
+    def __str__(self):
+        return str(self.course_name)
+
+
 class Group(models.Model):
     """БД содержащая группы студентов"""
     group_name = models.CharField(
         verbose_name='Название группы',
         max_length=200,
         unique=True,
+    )
+    course = models.ForeignKey(
+        Course,
+        verbose_name='Курс',
+        on_delete=models.CASCADE,
+    )
+    start_date = models.DateField(verbose_name='Дата начала обучения')
+    end_date = models.DateField(verbose_name='Дата окончания обучения')
+    activity = models.BooleanField(verbose_name='Активность', default=True)
+    comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True
     )
 
     class Meta:
@@ -16,6 +49,12 @@ class Group(models.Model):
     def __str__(self):
         return str(self.group_name)
 
+    def stud_count_admin(self):
+        return str(StudentsAll.objects.filter(
+            my_group__group_name=self.group_name
+        ).count())
+    stud_count_admin.short_description = 'Студентов в группе'
+
 
 class StudentsAll(models.Model):
     """БД содержащая всех студентов, их активность и
@@ -24,17 +63,22 @@ class StudentsAll(models.Model):
         verbose_name='Студент',
         max_length=200,
         unique=True)
+    start_date = models.DateField(verbose_name='Дата зачисления студента')
     activity = models.BooleanField(verbose_name='Активность', default=True)
-    my_group = models.ForeignKey(
+    my_group = models.ManyToManyField(
         Group,
-        verbose_name='Группа',
-        on_delete=models.CASCADE,
+        verbose_name='Группы',
+        blank=True,
+    )
+    comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True
     )
 
     class Meta:
         verbose_name = 'Студент'
         verbose_name_plural = 'Студенты'
-        ordering = ['my_group']
+        # ordering = ['my_group']
 
     def __str__(self):
         return self.name
@@ -47,10 +91,18 @@ class Lecture(models.Model):
         verbose_name='Лекция',
         max_length=200,
     )
-    students_count = models.IntegerField()
+    students_count = models.IntegerField(default=0)
     time = models.DateTimeField(verbose_name='Дата лекции')
-    student = models.ManyToManyField(StudentsAll, blank=True)
+    student = models.ManyToManyField(
+        StudentsAll,
+        verbose_name='Студенты',
+        blank=True
+    )
     group = models.ManyToManyField(Group, verbose_name='Группа', blank=True)
+    comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'Лекция'

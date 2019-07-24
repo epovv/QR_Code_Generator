@@ -21,7 +21,7 @@
                     <td><p align="center">{{lec}}<p>{{ lec.time }}</p></td>
                     <td>
                         <a class="nav-link" href="{% url 'qr_generator_url' lec.id %}">Посмотреть QR код</a>
-                        <a class="nav-link" href="{% url 'check_your_self_url' lec.id %}">Посмотреть пришедших студентов</a>
+                        <a class="nav-link" href="{% url 'lecture_more_url' lec.id %}">Подробнее</a>
                     </td>
                 </tr>
         </tbody>

@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -48,6 +47,7 @@ def receiving_data(request):
             lecture_name=request.POST['lecture_name'],
             students_count=students_came,
             time=datetime.strptime(request.POST['time'], '%Y-%m-%dT%H:%M'),
+            comment=request.POST['comment']
         )
         created_object.group.add(*query_groups)
         id = created_object.id
@@ -60,7 +60,9 @@ def qr_generator(request, id):
         return render(
             request,
             'lecturer/QR.html',
-            context={'link': request.build_absolute_uri('check_your_self/')}
+            context={
+                'link': request.build_absolute_uri('check/'),
+            }
         )
     else:
         raise Http404
@@ -76,18 +78,21 @@ def check(request, id):
         raise Http404
     if request.method == 'GET':
         if current_lect.time.date() == timezone.now().date():
-            list_groups = current_lect.group.all().values_list(
-                    'group_name', flat=True
+            search_query = request.GET.get('group', '')
+            if search_query:
+                students = StudentsAll.objects.filter(
+                    my_group__group_name=search_query
                 )
-            context = StudentsAll.objects.filter(
-                my_group__group_name__in=list_groups
-            )
+                groups = None
+            else:
+                groups = current_lect.group.all()
+                students = None
             response = render(
                 request,
                 'lecturer/check_your_self.html',
                 context={
-                    'students': context,
-                    'id': id,
+                    'students': students,
+                    'groups': groups,
                     'lecture': current_lect
                 }
             )
@@ -108,37 +113,15 @@ def check(request, id):
         return response
 
 
-def register(request):
-    """Регистрация"""
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-        else:
-            messages.error(request, 'Ошибка')
-            return redirect('registration_url')
-    else:
-        form = UserCreationForm()
-        return render(
-            request,
-            'registration/registration.html',
-            context={'form': form}
-        )
-
-
 def logout_view(request):
     """Выход из учетной запси"""
-    if request.user.is_authenticated:
-        logout(request)
-        return render(request, 'registration/logout.html')
-    else:
-        return redirect('login')
+    logout(request)
+    return redirect('login')
 
 
 @login_required(login_url='login')
 def lecture(request):
-    """Статистика. Лекция - Студенты"""
+    """Статистика. Лекции"""
     lectures = Lecture.objects.all()
     paginator = Paginator(lectures, 4)
     page_number = request.GET.get('page', 1)
@@ -149,6 +132,38 @@ def lecture(request):
         'lecturer/lectures.html',
         context={'lectures': page, 'is_paginated': is_paginator}
     )
+
+
+@login_required(login_url='login')
+def lecture_more(request, id):
+    """Статистика. Подробнее о лекции"""
+    current_lect = Lecture.objects.get(id=id)
+    if request.method == 'GET':
+        search_query = request.GET.get('group', '')
+        if search_query:
+            students = StudentsAll.objects.filter(
+                my_group__group_name=search_query
+            )
+            groups = None
+        else:
+            groups = current_lect.group.all()
+            students = None
+        response = render(
+            request,
+            'lecturer/lecture_more.html',
+            context={
+                'students': students,
+                'groups': groups,
+                'lecture': current_lect
+            }
+        )
+        return response
+    if request.method == 'POST':
+        current_lect.student.remove(
+            StudentsAll.objects.get(name=request.POST['Student'])
+        )
+        response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return response
 
 
 @login_required(login_url='login')

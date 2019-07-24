@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block content %}
-    <p>
-        {% qr_from_text link size="H" %}
-    </p>
+
+    Ссылка для перехода по QR коду: <a href="{{ link }}" class="alert-link">{{ link }}</a>
+    {% qr_from_text link size="H" %}
+
 {% endblock %}

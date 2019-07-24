@@ -5,11 +5,21 @@
 {% endblock %}
 
 {% block content %}
+    <div class="nav justify-content-end">
+      <div class="col-4">
+        <div class="list-group" id="list-tab" role="tablist">
+          <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
+          <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
+          <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+          <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+        </div>
+      </div>
+    </div>
     <table class="table">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Лекция</th>
-                <th scope="col">Студенты</th>
+                <th scope="col"></th>
                 <th scope="col">Число слушателей</th>
             </tr>
         </thead>
@@ -20,9 +30,7 @@
                     <p>{{ lecture }}</p> <p>{{ lecture.time }}</p>
                 </td>
                 <td scope="row">
-                    {% for stud in lecture.student.all %}
-                        {{ stud }}{% if not forloop.last %},{% endif %}
-                    {% endfor %}
+                    <a class="nav-link" href="{% url 'lecture_more_url' lecture.id %}">Подробнее о лекции</a>
                 </td>
                 <td>{{ lecture.student.count }} из {{ lecture.students_count }}
                 </td>

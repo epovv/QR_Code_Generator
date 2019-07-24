@@ -1,6 +1,7 @@
-from .models import Group, StudentsAll
+from .models import Course, Group, StudentsAll
 from django.db.utils import IntegrityError
 import random
+from datetime import date, timedelta
 
 
 first_name = ["Jay", "Jim", "Roy", "Axel", "Billy", "Charlie", "Jax", "Gina",
@@ -54,17 +55,31 @@ group_name = ['MTS-11', 'MTS-21', 'MTS-31', 'MTS-41', 'VM-11', 'VM-21',
               'VM-31', 'VM-41', 'SS-11', 'SS-21', 'SS-31', 'SS-41', 'IS-11',
               'IS-21', 'IS-31', 'IS-41']
 
+course_name = ['Python', 'JavaScript', 'PHP']
 
 def run_random():
-    """Генератор случайных имен и активности для каждой из 16-ти групп"""
-    for group in group_name:
+    """Генератор случайных имен и активности"""
+    for course in course_name:
+        c = None
         try:
-            a = Group.objects.create(group_name=group)
-            a.save()
+            c = Course.objects.create(course_name=course)
+            c.save()
         except IntegrityError:
             print('База сгенерирована отключите скрипт')
-        for i in range(random.randrange(10, 15)):
+        for i in range(random.randrange(2, 5)):
+            a = None
             try:
+                group = course + str(random.randrange(1, 100))
+                a = Group.objects.create(
+                    group_name=group,
+                    course=c,
+                    start_date=date.today(),
+                    end_date=date.today() + timedelta(days=random.randrange(10, 30))
+                )
+                a.save()
+            except IntegrityError:
+                pass
+            for i in range(random.randrange(10, 15)):
                 if random.randrange(0, 100) > 95:
                     activity = False
                 else:
@@ -72,11 +87,11 @@ def run_random():
                 name = random.choice(first_name) + ' ' + random.choice(last_name)
                 b = StudentsAll.objects.create(
                     name=name,
-                    my_group=a,
+                    start_date=date.today() + timedelta(days=random.randrange(0, 3)),
                     activity=activity
                 )
                 b.save()
-                print(group + ' - ' + name + ' ...OK')
-            except IntegrityError:
-                pass
+                b.my_group.add(a)
+                b.save()
+                print(name + ' ...OK')
     print('finish')

@@ -11,29 +11,38 @@
     {% if messages %}
         {% for message in messages %}
             <div class="alert {% if message.tags %}
-            alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+            alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}
+            </div>
         {% endfor %}
     {% endif %}
 
-    <form action="{% url 'check_your_self_url' id %}" method="post">{% csrf_token %}
-        <p><strong>Группы: {% for group in lecture.group.all %} {{ group }}{% if not forloop.last %},{% endif %}{% endfor %}</strong></p>
-    {% for name in students %}
-        {% if name.activity %}
-            {% if name in lecture.student.all  %}
-                <h4>
-                    <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
-                </h4>
+    {% if groups %}
+        <p><h5>Выберите вашу группу:</h5></p>
+        <form action="{% url 'check_your_self_url' lecture.id %}">
+            {% for name in groups %}
+                <h4><input type="submit" name="group" value="{{ name }}" class="btn btn-info"></h4>
+            {% endfor %}
+        </form>
+    {% endif %}
+
+    <form action="{% url 'check_your_self_url' lecture.id %}" method="post">{% csrf_token %}
+        {% for name in students %}
+            {% if name.activity %}
+                {% if name in lecture.student.all %}
+                    <h4>
+                        <input type="button" name="Student" value="{{ name }}" class="btn btn-success"/>
+                    </h4>
+                {% else %}
+                    <h4>
+                        <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
+                    </h4>
+                {% endif %}
             {% else %}
                 <h4>
-                    <input type="submit" name="Student" value="{{ name }}" class="btn btn-primary"/>
+                    <input type="button" name="Student" value="{{ name }}" class="btn btn-secondary"/>
                 </h4>
             {% endif %}
-        {% else %}
-            <h4>
-                <input type="button" name="Student" value="{{ name }}" class="btn btn-secondary"/>
-            </h4>
-        {% endif %}
-    {% endfor %}
+        {% endfor %}
     </form>
 
 {% endblock %}
