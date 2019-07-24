@@ -1,0 +1,55 @@
+{% extends "lecturer/base.html" %}
+
+
+{% block title %}
+    Подробнее о лекции
+{% endblock %}
+
+{% block content %}
+
+       <dl class="row">
+          <dt class="col-sm-3">Лекция:</dt>
+          <dd class="col-sm-9">{{ lecture }}</dd>
+
+          <dt class="col-sm-3">Число слушателей:</dt>
+          <dd class="col-sm-9">пришло {{ lecture.stud_count_admin }}</dd>
+
+          <dt class="col-sm-3">Время лекции:</dt>
+          <dd class="col-sm-9">{{ lecture.time }}</dd>
+
+          <dt class="col-sm-3">Комментарий:</dt>
+          <dd class="col-sm-9">{{ lecture.comment }}</dd>
+        </dl>
+        <form action="{% url 'lecture_more_url' lecture.id %}">
+            {% for name in groups %}
+                <h4><input type="submit" name="group" value="{{ name }}" class="btn btn-info"></h4>
+            {% endfor %}
+        </form>
+
+    {% if students %}
+        <div class="alert alert alert-info" role="alert">
+        <h6>При нажатии на зеленое поле произойдет удаление студента из пришедших.</h6>
+        </div>
+    {% endif %}
+
+        <form action="{% url 'lecture_more_url' lecture.id %}" method="post">{% csrf_token %}
+            {% for name in students %}
+                {% if name.activity %}
+                    {% if name in lecture.student.all %}
+                        <h4>
+                            <input type="submit" name="Student" value="{{ name }}" class="btn btn-success"/>
+                        </h4>
+                    {% else %}
+                        <h4>
+                            <input type="button" name="Student" value="{{ name }}" class="btn btn-primary"/>
+                        </h4>
+                    {% endif %}
+                {% else %}
+                    <h4>
+                        <input type="button" name="Student" value="{{ name }}" class="btn btn-secondary"/>
+                    </h4>
+                {% endif %}
+            {% endfor %}
+        </form>
+
+{% endblock %}
