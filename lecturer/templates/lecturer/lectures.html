@@ -5,16 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="nav justify-content-end">
-      <div class="col-4">
-        <div class="list-group" id="list-tab" role="tablist">
-          <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
-          <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
-          <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
-          <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
-        </div>
-      </div>
-    </div>
+
     <table class="table">
         <thead class="thead-dark">
             <tr>
@@ -43,18 +34,44 @@
         <nav aria-label="...">
             <ul class="pagination">
                 {% for n in lectures.paginator.page_range %}
-                    {% if lectures.number == n %}
-                        <li class="page-item active" aria-current="page">
-                            <a class="page-link" href="?page={{ n }}">{{ n }}<span
-                            class="sr-only">(current)</span></a>
-                        </li>
-                    {% elif n > lectures.number|add:-3 and n < lectures.number|add:3 %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                        </li>
+                    {% if search_query %}
+                        {% if lectures.number == n %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?group={{ search_query }}&page={{ n }}">{{ n }}<span
+                                class="sr-only">(current)</span></a>
+                            </li>
+                        {% elif n > lectures.number|add:-3 and n < lectures.number|add:3 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?group={{ search_query }}&page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        {% if lectures.number == n %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}<span
+                                class="sr-only">(current)</span></a>
+                            </li>
+                        {% elif n > lectures.number|add:-3 and n < lectures.number|add:3 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </ul>
         </nav>
         {% endif %}</p>
+{% endblock %}
+
+{% block left %}
+
+    <form action="{% url 'lecture' %}">
+        <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls="home">Фильтр по группам</a>
+        {% for group in groups %}
+          <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="?group={{ group }}" role="tab" aria-controls="profile">{{ group }}</a>
+        {% endfor %}
+         </div>
+    </form>
+
 {% endblock %}

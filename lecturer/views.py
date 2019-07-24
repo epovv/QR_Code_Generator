@@ -29,7 +29,7 @@ def main_page(request):
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
-        groups = Group.objects.all()
+        groups = Group.objects.filter(activity=True)
         date_min = datetime.now().isoformat()[:-10]
         return render(
             request,
@@ -122,7 +122,12 @@ def logout_view(request):
 @login_required(login_url='login')
 def lecture(request):
     """Статистика. Лекции"""
-    lectures = Lecture.objects.all()
+    group_filter = Group.objects.filter(activity=True)
+    search_query = request.GET.get('group', '')
+    if search_query:
+        lectures = Lecture.objects.filter(group__group_name=search_query)
+    else:
+        lectures = Lecture.objects.all()
     paginator = Paginator(lectures, 4)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -130,7 +135,12 @@ def lecture(request):
     return render(
         request,
         'lecturer/lectures.html',
-        context={'lectures': page, 'is_paginated': is_paginator}
+        context={
+            'lectures': page,
+            'is_paginated': is_paginator,
+            'groups':group_filter,
+            'search_query': search_query
+        }
     )
 
 
@@ -170,7 +180,6 @@ def lecture_more(request, id):
 def student(request):
     """Статистика. Студент - Лекции"""
     search_query = request.GET.get('search', '')
-
     if search_query:
         search_paginator = True
         students = StudentsAll.objects.filter(
@@ -180,7 +189,6 @@ def student(request):
     else:
         search_paginator = False
         students = StudentsAll.objects.all()
-
     paginator = Paginator(students, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

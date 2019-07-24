@@ -23,13 +23,10 @@
         <tbody>
             <tr>
                 <td scope="row">
-                {% if student.activity %}
                 <p>{{ student.name }}</p>
-                Группа: {{ student.my_group }}
-                {% else %}
-                <p>{{ student.name }} <strong>Не активен!</strong></p>
-                Группа: {{ student.my_group }}
-                {% endif %}
+                  {% for group in student.my_group.all %}
+                Группа: {{ group }}
+                   {% endfor %}
                 </td>
                 <td scope="row">
                     {% for lect in student.lecture_set.all %}
