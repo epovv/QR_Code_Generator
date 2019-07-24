@@ -11,4 +11,5 @@ urlpatterns = [
     path('lectures/', lecture, name='lecture'),
     path('students/', student, name='student'),
     path('lectures/<int:id>', lecture_more, name='lecture_more_url'),
+    path('students/<int:id>', student_more, name='student_more_url'),
 ]

@@ -15,7 +15,7 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Студент</th>
-                <th scope="col">Лекции</th>
+                <th scope="col"></th>
             </tr>
         </thead>
     {% for student in students %}
@@ -23,15 +23,13 @@
         <tbody>
             <tr>
                 <td scope="row">
-                <p>{{ student.name }}</p>
+                <p>{{ student.name }} id: {{ student.id }}</p>
                   {% for group in student.my_group.all %}
                 Группа: {{ group }}
                    {% endfor %}
                 </td>
                 <td scope="row">
-                    {% for lect in student.lecture_set.all %}
-                        {{ lect }}{% if not forloop.last %},{% endif %}
-                    {% endfor %}
+                    <a class="nav-link" href="{% url 'student_more_url' student.id %}">Подробнее о студенте</a>
                 </td>
             </tr>
         </tbody>
