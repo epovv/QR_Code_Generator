@@ -208,10 +208,7 @@ def student(request):
 @login_required(login_url='login')
 def student_more(request, id):
     student = StudentsAll.objects.get(id=id)
-    courses = Group.objects.filter(
-        group_name__in=(list(student.my_group.all()))
-    ).values_list('course__course_name', flat=True)
-
+    courses = student.my_group.all()
     return render(
         request, 'lecturer/student_more.html', context={
             'student': student,

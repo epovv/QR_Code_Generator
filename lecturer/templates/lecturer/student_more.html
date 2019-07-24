@@ -14,8 +14,7 @@
           <dd class="col-sm-9">{{ student.start_date }}</dd>
 
           <dt class="col-sm-3">Курсы:</dt>
-          <dd class="col-sm-9">{% for course in courses %}{{ course }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
-
+          <dd class="col-sm-9">{% for group in groups %}{{ group.course }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
           <dt class="col-sm-3">Группы:</dt>
           <dd class="col-sm-9">{% for group in student.my_group.all %} {{ group }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
 
