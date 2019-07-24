@@ -138,7 +138,7 @@ def lecture(request):
         context={
             'lectures': page,
             'is_paginated': is_paginator,
-            'groups':group_filter,
+            'groups': group_filter,
             'search_query': search_query
         }
     )
@@ -209,7 +209,6 @@ def student(request):
 def student_more(request, id):
     student = StudentsAll.objects.get(id=id)
     groups = student.my_group.all()
-    print(groups)
     return render(
         request, 'lecturer/student_more.html', context={
             'student': student,
