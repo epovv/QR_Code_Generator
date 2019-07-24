@@ -1,0 +1,33 @@
+{% extends "lecturer/base.html" %}
+
+{% block title %}
+    Подробнее о студенте
+{% endblock %}
+
+{% block content %}
+
+        <dl class="row">
+          <dt class="col-sm-3">Имя студента и его id:</dt>
+          <dd class="col-sm-9">{{ student.name }}, id: {{ student.id }}</dd>
+
+          <dt class="col-sm-3">Дата зачисления:</dt>
+          <dd class="col-sm-9">{{ student.start_date }}</dd>
+
+          <dt class="col-sm-3">Курсы:</dt>
+          <dd class="col-sm-9">{% for course in courses %}{{ course }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
+
+          <dt class="col-sm-3">Группы:</dt>
+          <dd class="col-sm-9">{% for group in student.my_group.all %} {{ group }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
+
+          <dt class="col-sm-3">Активность:</dt>
+          <dd class="col-sm-9">{% if student.activity %} Студент активен {% else %} Студент не активен {% endif %} </dd>
+
+          <dt class="col-sm-3">Комментарий:</dt>
+          <dd class="col-sm-9">{{ student.comment }}</dd>
+
+          <dt class="col-sm-3">Посещенные лекции:</dt>
+          <dd class="col-sm-9">{% for lect in student.lecture_set.all %} {{ lect }}{% if not forloop.last %},{% endif %} {% endfor %}</dd>
+
+        </dl>
+
+{% endblock %}
