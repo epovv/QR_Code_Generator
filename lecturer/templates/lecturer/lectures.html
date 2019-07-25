@@ -64,7 +64,7 @@
 {% endblock %}
 
 {% block left %}
-
+<div class="col-8">
     <form action="{% url 'lecture' %}">
         <div class="list-group" id="list-tab" role="tablist">
         <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="">Фильтр по группам</a>
@@ -73,5 +73,5 @@
         {% endfor %}
          </div>
     </form>
-
+</div>
 {% endblock %}
