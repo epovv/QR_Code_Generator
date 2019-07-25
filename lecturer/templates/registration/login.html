@@ -19,8 +19,10 @@
     <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
 
-        <p>Пользователь: {{ form.username }}</p>
-        <p>Пароль: {{ form.password }}</p>
+        <p>Пользователь:</p>
+        <p>{{ form.username }}</p>
+        <p>Пароль:</p>
+        <p>{{ form.password }}</p>
 
         <input type="submit" value="Войти" class="btn btn-primary">
         <input type="hidden" name="next" value="{{ next }}">

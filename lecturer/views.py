@@ -103,7 +103,7 @@ def check(request, id):
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
+        print(request.POST['Student'])
         current_lect.student.add(
             StudentsAll.objects.get(name=request.POST['Student'])
         )
@@ -183,9 +183,10 @@ def student(request):
     if search_query:
         search_paginator = True
         students = StudentsAll.objects.filter(
+            Q(id__icontains=search_query) |
             Q(name__icontains=search_query) |
             Q(my_group__group_name__icontains=search_query)
-        )
+        ).distinct()
     else:
         search_paginator = False
         students = StudentsAll.objects.all()
@@ -208,10 +209,10 @@ def student(request):
 @login_required(login_url='login')
 def student_more(request, id):
     student = StudentsAll.objects.get(id=id)
-    groups = student.my_group.all()
+    courses = set([group.course for group in student.my_group.all()])
     return render(
         request, 'lecturer/student_more.html', context={
             'student': student,
-            'groups': groups
+            'courses': courses
         }
     )

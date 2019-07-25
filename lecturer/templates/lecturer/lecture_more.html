@@ -36,18 +36,21 @@
             {% for name in students %}
                 {% if name.activity %}
                     {% if name in lecture.student.all %}
-                        <h4>
+                        <h6>
+                            <label class="alert alert alert-info">id: {{ name.id }}</label>
                             <input type="submit" name="Student" value="{{ name }}" class="btn btn-success"/>
-                        </h4>
+                        </h6>
                     {% else %}
-                        <h4>
+                        <h6>
+                            <label class="alert alert alert-info">id: {{ name.id }}</label>
                             <input type="button" name="Student" value="{{ name }}" class="btn btn-primary"/>
-                        </h4>
+                        </h6>
                     {% endif %}
                 {% else %}
-                    <h4>
+                    <h6>
+                        <label class="alert alert alert-info">id: {{ name.id }}</label>
                         <input type="button" name="Student" value="{{ name }}" class="btn btn-secondary"/>
-                    </h4>
+                    </h6>
                 {% endif %}
             {% endfor %}
         </form>

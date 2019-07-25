@@ -5,12 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <p>
-        <form class="form-inline" action="{% url 'student' %}">
-            <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search" name="search">
-            <button class="btn btn btn-outline-primary" type="submit">Поиск</button>
-        </form>
-    </p>
+
     <table class="table">
         <thead class="thead-dark">
             <tr>
@@ -24,8 +19,8 @@
             <tr>
                 <td scope="row">
                 <p>{{ student.name }} id: {{ student.id }}</p>
-                  {% for group in student.my_group.all %}
-                Группа: {{ group }}
+                  Группа: {% for group in student.my_group.all %}
+                    {{ group }}{% if not forloop.last %},{% endif %}
                    {% endfor %}
                 </td>
                 <td scope="row">
@@ -69,5 +64,14 @@
         </nav>
         {% endif %}
     </p>
+
+{% endblock %}
+
+{% block left %}
+
+    <form class="form-inline" action="{% url 'student' %}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search" name="search">
+        <button class="btn btn btn-outline-primary" type="submit">Поиск</button>
+    </form>
 
 {% endblock %}
