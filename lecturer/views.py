@@ -29,7 +29,7 @@ def main_page(request):
 def receiving_data(request):
     """Страница для ввода данных от лектора"""
     if request.method == 'GET':
-        groups = Group.objects.filter(activity=True)
+        groups = Group.objects.filter(activity=True, course__activity=True)
         date_min = datetime.now().isoformat()[:-10]
         return render(
             request,
@@ -100,16 +100,16 @@ def check(request, id):
         else:
             return HttpResponseForbidden(request)
     elif request.method == 'POST':
+        print(request.POST['Student'])
         if 'name' in request.COOKIES:
             messages.error(request, 'Вы уже отмечались сегодня!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        print(request.POST['Student'])
         current_lect.student.add(
             StudentsAll.objects.get(name=request.POST['Student'])
         )
         response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         messages.success(request, 'Вы отмечены! Спасибо за присутствие.')
-        response.set_cookie('name', max_age=1)
+        response.set_cookie('name', max_age=0)
         return response
 
 
@@ -122,7 +122,9 @@ def logout_view(request):
 @login_required(login_url='login')
 def lecture(request):
     """Статистика. Лекции"""
-    group_filter = Group.objects.filter(activity=True)
+    group_filter = Group.objects.filter(
+        Q(course__activity=True) & Q(activity=True)
+    )
     search_query = request.GET.get('group', '')
     if search_query:
         lectures = Lecture.objects.filter(group__group_name=search_query)
@@ -183,13 +185,19 @@ def student(request):
     if search_query:
         search_paginator = True
         students = StudentsAll.objects.filter(
+            Q(my_group__activity=True) &
+            Q(my_group__course__activity=True) & (
             Q(id__icontains=search_query) |
             Q(name__icontains=search_query) |
             Q(my_group__group_name__icontains=search_query)
-        ).distinct()
+            )
+        ).order_by('id').distinct()
     else:
         search_paginator = False
-        students = StudentsAll.objects.all()
+        students = StudentsAll.objects.filter(
+            Q(my_group__activity=True) &
+            Q(my_group__course__activity=True)
+        )
     paginator = Paginator(students, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
